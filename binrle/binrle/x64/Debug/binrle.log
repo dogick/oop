@@ -1,0 +1,16 @@
+﻿  main.cpp
+  binrle.vcxproj -> C:\Users\Вадим\Documents\Visual Studio 2015\Projects\binrle\x64\Debug\binrle.exe
+  binrle.vcxproj -> C:\Users\Вадим\Documents\Visual Studio 2015\Projects\binrle\x64\Debug\binrle.pdb (Full PDB)
+  Сравнение файлов INPUT\in1.txt и OUTPUT\OUT1UNPACK.TXT
+  FC: различия не найдены
+  
+  Сравнение файлов INPUT\in2.txt и OUTPUT\OUT2UNPACK.TXT
+  FC: различия не найдены
+  
+  Сравнение файлов INPUT\in3.txt и OUTPUT\OUT3UNPACK.TXT
+  FC: различия не найдены
+  
+  Сравнение файлов INPUT\in4.txt и OUTPUT\OUT4UNPACK.TXT
+  FC: различия не найдены
+  
+  Program testing succeeded
