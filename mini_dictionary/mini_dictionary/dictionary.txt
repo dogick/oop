@@ -1,0 +1,5 @@
+ball|м€ч
+cat|кот
+dog|собака
+fdf|fg
+кошка|cat
