@@ -77,10 +77,28 @@ bool CVirtualControl::Info(std::istream & /*args*/)
 {
 	std::string output = m_vaz.IsTurnOnEngine() ? 
 		"Engine is turned on\n"  
-		"Direction: " + std::to_string(m_vaz.GetSpeed()) + "\n"
+		"Direction: " + GetDirectionString(m_vaz.GetSpeed()) + "\n"
 		"Gear: " + std::to_string(m_vaz.GetGear()) + "\n" 
 		"Speed: " + std::to_string(m_vaz.GetSpeed())  + "\n"
 		: "Engine is turned off\n";
 	m_output << output;
 	return true; 
+}
+
+std::string CVirtualControl::GetDirectionString(int speed)
+{
+	std::string result;
+	if (speed > 0)
+	{
+		result = "Forward";
+	}
+	else if (speed < 0)
+	{
+		result = "Backward";
+	}
+	else
+	{
+		result = "Standing";
+	}
+	return result;
 }

@@ -46,7 +46,7 @@ public:
 	bool SetSpeed(int speed);
 private:
 	bool IsNeutralGear() const;
-	bool IsAvailableSpeed(Gear const& gear, int speed) const;
+	bool IsSpeedInRange(Gear const& gear, int speed) const;
 	bool CheckGear(int gear) const;
 	bool m_isOn = false;
 	Gear m_selectGear = Gear::NEUTRAL_GEAR;

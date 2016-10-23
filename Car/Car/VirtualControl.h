@@ -10,6 +10,7 @@ public:
 	bool HandleCommand();
 
 private:
+	std::string GetDirectionString(int speed);
 	bool TurnOnEngine(std::istream & args);
 	bool TurnOffEngine(std::istream & args);
 	bool SetGear(std::istream & args);
