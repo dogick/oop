@@ -13,13 +13,6 @@ enum class Gear
 	FIFTH_GEAR = 5,
 };
 
-enum class Direction
-{
-	STAND = 0,
-	FORWARD = 1,
-	BACKWARD = -1,
-};
-
 typedef std::pair<int, int> Speed;
 typedef std::map<Gear, Speed> SpeedRange;
 static const SpeedRange speedRange = {

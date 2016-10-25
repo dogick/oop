@@ -1,16 +1,12 @@
 #pragma once
 #include <boost/noncopyable.hpp>
-
-class CCar;
+#include "../Car/Car.h"
 
 class CVirtualControl : boost::noncopyable
 {
 public:
 	CVirtualControl(CCar & vaz, std::istream & input, std::ostream & output);
 	bool HandleCommand();
-
-private:
-	std::string GetDirectionString(int speed);
 	bool TurnOnEngine(std::istream & args);
 	bool TurnOffEngine(std::istream & args);
 	bool SetGear(std::istream & args);
@@ -25,3 +21,5 @@ private:
 
 	const ActionMap m_actionMap;
 };
+
+std::string GetDirectionString(int speed);
