@@ -14,26 +14,6 @@ CVirtualControlFixture::CVirtualControlFixture()
 	virtualControl = std::make_shared<CVirtualControl>(vaz, std::cin, std::cout);
 }
 
-BOOST_AUTO_TEST_SUITE(GetDirectionString_function)
-   BOOST_AUTO_TEST_CASE(when_speed_is_a_negative_number)
-   {
-	    std::string result = "Backward";
-		int speed = -10;
-		BOOST_CHECK_EQUAL(GetDirectionString(speed), result);
-   }
-   BOOST_AUTO_TEST_CASE(when_the_speed_is_equal_to_a_positive_number)
-   {
-	    std::string result = "Forward";
-		int speed = 1;
-		BOOST_CHECK_EQUAL(GetDirectionString(speed), result);
-   }
-   BOOST_AUTO_TEST_CASE(when_the_speed_is_0)
-   {
-	   std::string result = "Standing";
-	   int speed = 0;
-	   BOOST_CHECK_EQUAL(GetDirectionString(speed), result);
-   }
-BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(VirtualControl, CVirtualControlFixture)
    BOOST_AUTO_TEST_CASE(engine_can_be_turned_on)
@@ -71,7 +51,7 @@ BOOST_FIXTURE_TEST_SUITE(VirtualControl, CVirtualControlFixture)
            {
 	           std::istringstream speed("20");
 	    	   BOOST_CHECK(virtualControl->SetSpeed(speed));
-		       BOOST_CHECK_EQUAL(vaz.GetSpeed(), -20);
+		       BOOST_CHECK_EQUAL(vaz.GetSpeed(), 20);
            }
 	   BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()
