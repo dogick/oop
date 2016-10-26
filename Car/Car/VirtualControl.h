@@ -12,6 +12,7 @@ public:
 	bool SetGear(std::istream & args);
 	bool SetSpeed(std::istream & args);
 	bool Info(std::istream & args);
+	std::string GetDirectionString(Direction const& direction);
 private:
 	typedef std::map<std::string, std::function<bool(std::istream & args)>> ActionMap;
 
@@ -21,5 +22,3 @@ private:
 
 	const ActionMap m_actionMap;
 };
-
-std::string GetDirectionString(int speed);

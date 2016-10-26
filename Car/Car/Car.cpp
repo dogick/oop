@@ -13,7 +13,7 @@ int CCar::GetGear() const
 
 int CCar::GetSpeed() const
 {
-	return m_speed;
+	return std::abs(m_speed);
 }
 
 bool CCar::IsTurnOnEngine() const
@@ -29,7 +29,7 @@ bool CCar::TurnOnEngine()
 bool CCar::TurnOffEngine()
 {
 	bool isTurnOffEngine = false;
-	if (IsNeutralGear() && m_isOn && (m_speed == 0))
+	if (m_isOn && (m_speed == 0) && IsNeutralGear())
 	{
 		m_isOn = false;
 		isTurnOffEngine = true; 
@@ -80,4 +80,22 @@ bool CCar::SetSpeed(int speed)
 		}
 	}
     return isSetSpeed;
+}
+
+Direction CCar::GetDirection() const
+{
+	Direction direction;
+	if (m_speed > 0)
+	{
+		direction = Direction::FORWARD;
+	}
+	else if (m_speed < 0)
+	{
+		direction = Direction::BACKWARD;	
+	}
+	else
+	{
+		direction = Direction::STAND;
+	}
+	return direction;
 }
