@@ -14,6 +14,11 @@ public:
 private:
     bool DefineVar(std::istream & args);
     bool PrintError(ReturnCode const& code);
+    bool AssignVar(std::istream & args);
+    bool IsNumber(std::string const& assign);
+    std::vector<std::string> GetSplitResult(std::string const& assign);
+    bool PrintVars(std::istream & args);
+    std::string GetFormatValue(double const& value);
 private:
     typedef std::map<std::string, std::function<bool(std::istream & args)>> ActionMap;
 
