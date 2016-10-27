@@ -102,6 +102,9 @@ bool CControl::PrintError(ReturnCode const& code)
     case ReturnCode::INCORRECT_DATA:
         m_output << "INCORRECT DATA!!!\n";
         break;
+    case ReturnCode::SECOND_IDENTIFIER_IS_NOT_DIFINE:
+        m_output << "SECOND IDENTIFIER IS NOT DIFINE!!!\n";
+        break;
     default:
         isWasError = false;
         break;

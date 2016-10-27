@@ -5,6 +5,11 @@ Vars CCalculator::GetVariables() const
 {
     return m_variables.GetVars();
 }
+
+double CCalculator::GetValueVar(std::string const& identifier) const
+{
+    return GetVariables().find(identifier)->second;
+}
 bool CCalculator::IsDigit(char ch) const
 {
     return (ch >= '0') && (ch <= '9');
@@ -65,8 +70,25 @@ void CCalculator::AssignValue(std::string const& identifier, double value)
     }
 }
 
-void CCalculator::AssignIdentifier(std::string const& firstIdentifier, std::string const& secondIdentifier)
+ReturnCode CCalculator::AssignIdentifier(std::string const& firstIdentifier, std::string const& secondIdentifier)
 {
-   // ReturnCode wasError = ReturnCode::NO_ERRORS;
-   // return wasError;
+    ReturnCode wasError = ReturnCode::NO_ERRORS;
+    bool isfirstIdentifierDeclared = m_variables.IsIdentifierDeclared(firstIdentifier);
+    bool issecondIdentifierDeclared = m_variables.IsIdentifierDeclared(secondIdentifier);
+    if (isfirstIdentifierDeclared && issecondIdentifierDeclared)
+    {
+        double value = GetValueVar(secondIdentifier);
+        m_variables.SetValue(firstIdentifier, value);
+    }
+    else if (!isfirstIdentifierDeclared && issecondIdentifierDeclared)
+    {
+        m_variables.AddIdentifier(firstIdentifier);
+        double value = GetValueVar(secondIdentifier);
+        m_variables.SetValue(firstIdentifier, value);
+    }
+    else
+    {
+        wasError = ReturnCode::SECOND_IDENTIFIER_IS_NOT_DIFINE;
+    }
+    return wasError;
 }

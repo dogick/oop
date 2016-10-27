@@ -16,6 +16,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <math.h> 
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
