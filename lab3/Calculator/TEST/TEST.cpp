@@ -47,9 +47,20 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, CCalculatorFixture)
         BOOST_CHECK(calculator.DefineVar("rectangle+position") == ReturnCode::INCORRECTLY_IDENTIFIER);
     }
 
-/*  BOOST_AUTO_TEST_CASE(after_the_declaration_of_its_identifier_value_equal_to_nan)
+    BOOST_AUTO_TEST_CASE(after_the_declaration_of_its_identifier_value_equal_to_nan)
     {
-        BOOST_CHECK(calculator.DefineVar("позиция") == ReturnCode::INCORRECTLY_IDENTIFIER);
-        BOOST_CHECK(calculator.DefineVar("position") == ReturnCode::NO_ERRORS);
-    }*/
+        std::string identifier = "position";
+        BOOST_CHECK(calculator.DefineVar(identifier) == ReturnCode::NO_ERRORS);
+        BOOST_CHECK(isnan(calculator.GetValueVar(identifier)));
+    }
+
+    BOOST_AUTO_TEST_CASE(can_assign_a_variable_value)
+    {
+        std::string identifier = "position";
+        double value = 10.3;
+        BOOST_CHECK(calculator.DefineVar(identifier) == ReturnCode::NO_ERRORS);
+        calculator.AssignValue(identifier, 10.3);
+        BOOST_CHECK(calculator.GetValueVar(identifier) == value);
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
