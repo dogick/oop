@@ -1,129 +1,141 @@
 #include "stdafx.h"
 #include "Control.h"
+#include "Calculator.h"
+#include <boost/optional.hpp>
+#include <boost/format.hpp>
 
 using namespace std;
 using namespace std::placeholders;
 
+
 CControl::CControl(CCalculator & calculator, std::istream & input, std::ostream & output)
-    : m_calculator(calculator)
-    , m_input(input)
-    , m_output(output)
-    , m_actionMap({
-        { "var", bind(&CControl::DefineVar, this, _1) },
-        { "let", bind(&CControl::AssignVar, this, _1) },
-        { "printvars", bind(&CControl::PrintVars, this, _1) },
+	: m_calculator(calculator)
+	, m_input(input)
+	, m_output(output)
+	, m_actionMap({
+		{ "var", bind(&CControl::DefineVar, this, _1) },
+		{ "print", bind(&CControl::PrintValueVar, this, _1) },
+		{ "printvars", bind(&CControl::PrintVars, this, _1) },
+		{ "let", bind(&CControl::SetValueVar, this, _1) },
 })
 {
 }
 
-bool CControl::HandleCommand()
-{
-    string commandLine;
-    getline(m_input, commandLine);
-    istringstream strm(commandLine);
-
-    string action;
-    strm >> action;
-
-    auto it = m_actionMap.find(action);
-    if (it != m_actionMap.end())
-    {
-        it->second(strm);
-    }
-    else
-    {
-        return false;
-    }
-
-    return true;
-}
-
-bool CControl::DefineVar(std::istream & args)
-{
-    std::string identifier;
-    args >> identifier;
-    auto wasError = m_calculator.DefineVar(identifier);
-    return PrintError(wasError);
-}
-
-std::vector<std::string> CControl::GetSplitResult(std::string const& assign)
-{
-    std::vector<std::string> resultSplit;
-    boost::split(resultSplit, assign, boost::is_any_of("="));
-    return resultSplit;
-}
-
-bool CControl::IsNumber(std::string const& assign)
-{
-    bool isNumber = true;
-    try
-    {
-        boost::lexical_cast<double>(assign);
-    }
-    catch (boost::bad_lexical_cast)
-    {
-        isNumber = false;
-    }
-    return isNumber;
-}
-
-bool CControl::AssignVar(std::istream & args)
-{
-    auto wasError = ReturnCode::NO_ERRORS;
-    std::string assign;
-    args >> assign;
-    std::vector<std::string> resultSplit = GetSplitResult(assign);
-    if (!resultSplit.empty() && m_calculator.CheckIdentifier(resultSplit[0]) && IsNumber(resultSplit[1]))
-    {
-        m_calculator.AssignValue(resultSplit[0], boost::lexical_cast<double>(resultSplit[1]));
-    }
-    else if(!resultSplit.empty() && m_calculator.CheckIdentifier(resultSplit[0]) && m_calculator.CheckIdentifier(resultSplit[1]))
-    {
-        m_calculator.AssignIdentifier(resultSplit[0], resultSplit[1]);
-    }
-    else
-    {
-        wasError = ReturnCode::INCORRECT_DATA;
-    }
-    return PrintError(wasError);
-}
-
 bool CControl::PrintError(ReturnCode const& code)
 {
-    bool isWasError = true;
-    switch (code)
-    {
-    case ReturnCode::INCORRECTLY_IDENTIFIER:
-        m_output << "INCORRECTLY IDENTIFIER!!!\n";
-        break;
-    case ReturnCode::THIS_IDENTIFIER_ALREADY_DECLARED:
-        m_output << "THIS IDENTIFIER ALREADY DECLARED!!!\n";
-        break;
-    case ReturnCode::INCORRECT_DATA:
-        m_output << "INCORRECT DATA!!!\n";
-        break;
-    case ReturnCode::SECOND_IDENTIFIER_IS_NOT_DIFINE:
-        m_output << "SECOND IDENTIFIER IS NOT DIFINE!!!\n";
-        break;
-    default:
-        isWasError = false;
-        break;
-    }
-    return isWasError;
+	bool isWasError = true;
+	switch (code)
+	{
+	case ReturnCode::NOT_FOUND_IDENTIFIER:
+		m_output << "NOT FOUND ID!!!\n";
+		break;
+	case ReturnCode::INCORRECT_IDENTIFIER:
+		m_output << "INCORRECT ID!!!\n";
+		break;
+	case ReturnCode::IDENTIFIER_ALREADY_HAS:
+		m_output << "ID ALREADY HAS!!!\n";
+			break;
+	default:
+		isWasError = false;
+		break;
+	}
+	return isWasError;
 }
 
 std::string CControl::GetFormatValue(double const& value)
 {
-    return str(boost::format("%.2f") % value);
+	return str(boost::format("%.2f") % value);
+}
+
+bool CControl::HandleCommand()
+{
+	string commandLine;
+	getline(m_input, commandLine);
+	istringstream strm(commandLine);
+
+	string action;
+	strm >> action;
+
+	auto it = m_actionMap.find(action);
+	if (it != m_actionMap.end())
+	{
+		it->second(strm);
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CControl::DefineVar(std::istream & args)
+{
+	std::string identifier;
+	args >> identifier;
+	auto code = m_calculator.DefineVar(identifier);
+	return PrintError(code);
+}
+
+bool CControl::PrintValueVar(std::istream & args)
+{
+	std::string identifier;
+	args >> identifier;
+	std::string result;
+	if (m_calculator.IsVar(identifier))
+	{
+		double value = m_calculator.GetValueVar(identifier);
+		result = isnan(value) ? "nan" : GetFormatValue(value);
+	}
+	else
+	{
+		m_output << "ERROR: Such identifier has not been declared!!!\n";
+		return false;
+	}
+	m_output << result << "\n";
+	return true;
 }
 
 bool CControl::PrintVars(std::istream & args)
 {
-	auto vars = m_calculator.GetVariables();
+	auto vars = m_calculator.GetVars();
 	for (auto var : vars)
 	{
 		std::string value = isnan(var.second) ? "nan" : GetFormatValue(var.second);
 		std::cout << var.first << ":" << value << std::endl;
+	}
+	return true;
+}
+
+bool CControl::SetValueVar(std::istream & args)
+{
+	ReturnCode code;
+	std::string determination;
+	args >> determination;
+	boost::regex identifierAndValue("(\\w+)=([+-]?(\\d*[.,])?\\d*)");
+	boost::regex twoIdentifier("(\\w+)=(\\w+)");
+	boost::cmatch result;
+	double value;
+	if (boost::regex_match(determination.c_str(), result, identifierAndValue))
+	{
+		std::string identifier = std::string(result[1].first, result[1].second);
+		std::cout << "dgd" << std::endl;
+		value = boost::lexical_cast<double>(std::string(result[2].first, result[2].second));
+		m_calculator.SetValueVar(identifier, value);
+	}
+	else if (boost::regex_match(determination.c_str(), result, twoIdentifier))
+	{
+		std::string firstIdentifier = std::string(result[1].first, result[1].second);
+		std::string secondIdentifier = std::string(result[2].first, result[2].second);
+		code = m_calculator.AssignVar(firstIdentifier, secondIdentifier);
+		PrintError(code);
+		std::cout << "dgnd" << std::endl;
+	}
+	else
+	{
+		code = ReturnCode::INCORRECT_PHRASE_ENTERED;
+		PrintError(code);
+		return false;
 	}
 	return true;
 }

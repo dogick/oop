@@ -1,28 +1,29 @@
 #pragma once
 #include "stdafx.h"
-#include "Variables.h"
+
+typedef std::map<std::string, double> Var;
 
 enum class ReturnCode
 {
-    NO_ERRORS,
-    INCORRECTLY_IDENTIFIER,
-    THIS_IDENTIFIER_ALREADY_DECLARED,
-    INCORRECT_DATA,
-    SECOND_IDENTIFIER_IS_NOT_DIFINE,
-    //incorrect data
+	NO_ERRORS,
+	NOT_FOUND_IDENTIFIER,
+	INCORRECT_IDENTIFIER,
+	IDENTIFIER_ALREADY_HAS,
+	IDENTIFIER_NOT_FOUND,
+	INCORRECT_PHRASE_ENTERED,
+	//Identifier not found
 };
 
 class CCalculator
 {
 public:
-    Vars GetVariables()const;
-    double GetValueVar(std::string const& identifier) const;
-
-    bool CheckIdentifier(std::string const& identifier) const;
-    bool IsDigit(char ch) const;
-    ReturnCode DefineVar(std::string const& identifier);
-    void AssignValue(std::string const& identifier, double value);
-    ReturnCode AssignIdentifier(std::string const& firstIdentifier, std::string const& secondIdentifier);
+	ReturnCode DefineVar(std::string const& identifier);
+	double GetValueVar(std::string const& identifier) const;
+	bool IsVar(std::string const& identifier) const;
+	bool SetValueVar(std::string const& identifier, double value);
+	Var GetVars();
+	ReturnCode AssignVar(std::string const& firstIdentifier, std::string const& secondIdentifier);
+	void ChangeValue(std::string const& firstIdentifier, std::string const& secondIdentifier);
 private:
-    CVariables m_variables;
+	Var m_var;
 };
