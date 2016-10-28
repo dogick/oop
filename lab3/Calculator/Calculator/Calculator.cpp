@@ -1,91 +1,106 @@
 #include "stdafx.h"
 #include "Calculator.h"
 
-/*Var CCalculator::GetVars()
+CStorageVar CCalculator::GetStorageVar() const
 {
-	return m_var;
-}*/
-
-bool IsDigitTheFirstElement(std::string const& identifier)
-{
-	return isdigit(identifier[0]) ? true : false; // isdigit не возвращает булево значение
+    return m_storageVar;
 }
 
-Var CCalculator::GetVars()
+bool CCalculator::IsDigit(char ch) const
 {
-	return m_var;
+    return (ch >= '0') && (ch <= '9');
 }
 
-bool CCalculator::IsVar(std::string const& identifier) const
+bool CCalculator::CheckIdentifier(std::string const& identifier) const
 {
-	auto var = m_var.find(identifier);
-	return var != m_var.end();
+    bool isIdentifier = true;
+    if (!identifier.empty() && !IsDigit(identifier[0]))
+    {
+        for (char symbol : identifier)
+        {
+            bool isCorrectSymbol = (symbol >= 'A') && (symbol <= 'Z') || (symbol >= 'a') && (symbol <= 'z') || (symbol == '_') || IsDigit(symbol);
+            if (!isCorrectSymbol)
+            {
+                isIdentifier = false;
+            }
+        }
+    }
+    else
+    {
+        isIdentifier = false;
+    }
+    return isIdentifier;
 }
 
-ReturnCode CCalculator::DefineVar(std::string const& identifier) 
+RuntimeError CCalculator::DefineVar(std::string const& identifier)
 {
-	ReturnCode wasError = ReturnCode::NO_ERRORS;
-	auto var = m_var.find(identifier);
-	if (!identifier.empty() && (var == m_var.end()) && !IsDigitTheFirstElement(identifier))
-	{
-		m_var.emplace(identifier, NAN);
-	}
-	else if (IsDigitTheFirstElement(identifier))
-	{
-		wasError = ReturnCode::INCORRECT_IDENTIFIER;
-	}
-	else if (var != m_var.end())
-	{
-		wasError = ReturnCode::IDENTIFIER_ALREADY_HAS;
-	}
-	return wasError;
+    RuntimeError wasError = RuntimeError::NO_ERRORS;
+    bool isIdentifier = CheckIdentifier(identifier);
+    bool isIdentifierDeclared = m_storageVar.IsIdentifierDeclared(identifier);
+    if (!identifier.empty() && isIdentifier && !isIdentifierDeclared)
+    {
+        m_storageVar.AddIdentifier(identifier);
+    }
+    else if (!isIdentifier)
+    {
+        wasError = RuntimeError::INCORRECTLY_IDENTIFIER;
+    }
+    else if (isIdentifierDeclared)
+    {
+        wasError = RuntimeError::THIS_IDENTIFIER_ALREADY_DECLARED;
+    }
+    return wasError;
 }
 
-void CCalculator::ChangeValue(std::string const& firstIdentifier, std::string const& secondIdentifier)
+RuntimeError CCalculator::AssignValue(std::string const& identifier, double value)
 {
-	auto secondIdentifierValue = m_var.find(secondIdentifier);
-	auto firstIdentifierValue = m_var.find(firstIdentifier);
-	firstIdentifierValue->second = secondIdentifierValue->second;
+    RuntimeError wasError = RuntimeError::NO_ERRORS;
+    bool isIdentifierDeclared = m_storageVar.IsIdentifierDeclared(identifier);
+    if (CheckIdentifier(identifier))
+    {
+        if (isIdentifierDeclared)
+        {
+            m_storageVar.SetValue(identifier, value);
+        }
+        else if (!isIdentifierDeclared)
+        {
+            m_storageVar.AddIdentifier(identifier);
+            m_storageVar.SetValue(identifier, value);
+        }
+    }
+    else
+    {
+        wasError = RuntimeError::INCORRECTLY_IDENTIFIER;
+    }
+    return wasError;
 }
 
-ReturnCode CCalculator::AssignVar(std::string const& firstIdentifier, std::string const& secondIdentifier)
+RuntimeError CCalculator::AssignIdentifier(std::string const& firstIdentifier, std::string const& secondIdentifier)
 {
-	ReturnCode wasError = ReturnCode::NO_ERRORS;
-	if (IsVar(firstIdentifier) && IsVar(secondIdentifier))
-	{
-		ChangeValue(firstIdentifier, secondIdentifier);
-	}
-	else if (!IsVar(firstIdentifier) && IsVar(secondIdentifier))
-	{
-		DefineVar(firstIdentifier);
-		ChangeValue(firstIdentifier, secondIdentifier);
-	}
-	else
-	{
-		wasError = ReturnCode::IDENTIFIER_NOT_FOUND;
-	}
-	return wasError;
-}
-
-bool CCalculator::SetValueVar(std::string const& identifier, double value)
-{
-	bool isSetValueVar = true;
-	if (IsVar(identifier))
-	{
-		auto var = m_var.find(identifier);
-		var->second = value;
-	}
-	else
-	{
-		DefineVar(identifier);	
-		auto var = m_var.find(identifier);
-		var->second = value;
-	}
-	return isSetValueVar;
-}
-
-double CCalculator::GetValueVar(std::string const& identifier) const
-{
-	auto var = m_var.find(identifier);
-	return var != m_var.end() ? var->second : NAN;
+    RuntimeError wasError = RuntimeError::NO_ERRORS;
+    if (CheckIdentifier(firstIdentifier) && CheckIdentifier(secondIdentifier))
+    {
+        bool isfirstIdentifierDeclared = m_storageVar.IsIdentifierDeclared(firstIdentifier);
+        bool issecondIdentifierDeclared = m_storageVar.IsIdentifierDeclared(secondIdentifier);
+        if (isfirstIdentifierDeclared && issecondIdentifierDeclared)
+        {
+            double value = m_storageVar.GetValueVar(secondIdentifier);
+            m_storageVar.SetValue(firstIdentifier, value);
+        }
+        else if (!isfirstIdentifierDeclared && issecondIdentifierDeclared)
+        {
+            wasError = DefineVar(firstIdentifier);
+            double value = m_storageVar.GetValueVar(secondIdentifier);
+            m_storageVar.SetValue(firstIdentifier, value);
+        }
+        else
+        {
+            wasError = RuntimeError::SECOND_IDENTIFIER_IS_NOT_DIFINE;
+        }
+    }
+    else
+    {
+        wasError = RuntimeError::INCORRECTLY_IDENTIFIER;
+    }
+    return wasError;
 }

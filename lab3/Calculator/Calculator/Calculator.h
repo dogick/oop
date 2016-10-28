@@ -1,29 +1,28 @@
 #pragma once
 #include "stdafx.h"
+#include "StorageVar.h"
 
-typedef std::map<std::string, double> Var;
-
-enum class ReturnCode
+enum class RuntimeError
 {
-	NO_ERRORS,
-	NOT_FOUND_IDENTIFIER,
-	INCORRECT_IDENTIFIER,
-	IDENTIFIER_ALREADY_HAS,
-	IDENTIFIER_NOT_FOUND,
-	INCORRECT_PHRASE_ENTERED,
-	//Identifier not found
+    NO_ERRORS,
+    INCORRECTLY_IDENTIFIER,
+    THIS_IDENTIFIER_ALREADY_DECLARED,
+    INCORRECT_DATA,
+    SECOND_IDENTIFIER_IS_NOT_DIFINE,
+    IDENTIFIER_IS_NOT_DIFINE,
+    //incorrect data
 };
 
 class CCalculator
 {
 public:
-	ReturnCode DefineVar(std::string const& identifier);
-	double GetValueVar(std::string const& identifier) const;
-	bool IsVar(std::string const& identifier) const;
-	bool SetValueVar(std::string const& identifier, double value);
-	Var GetVars();
-	ReturnCode AssignVar(std::string const& firstIdentifier, std::string const& secondIdentifier);
-	void ChangeValue(std::string const& firstIdentifier, std::string const& secondIdentifier);
+    CStorageVar CCalculator::GetStorageVar() const;
+
+    bool CheckIdentifier(std::string const& identifier) const;
+    bool IsDigit(char ch) const;
+    RuntimeError DefineVar(std::string const& identifier);
+    RuntimeError AssignValue(std::string const& identifier, double value);
+    RuntimeError AssignIdentifier(std::string const& firstIdentifier, std::string const& secondIdentifier);
 private:
-	Var m_var;
+    CStorageVar m_storageVar;
 };

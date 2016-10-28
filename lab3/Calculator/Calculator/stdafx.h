@@ -4,23 +4,22 @@
 //
 
 #pragma once
-
+#define _SCL_SECURE_NO_WARNINGS
 #include "targetver.h"
 
 #include <stdio.h>
 #include <tchar.h>
 
-#include <map>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <functional>
-#include <iterator>
-#include <iomanip>
+#include <map>
+#include <vector>
 #include <math.h> 
-#include <boost/lexical_cast.hpp> 
-#include <boost/optional.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/regex.hpp>
 
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы
