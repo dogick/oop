@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EFB5F798-8BD1-4322-B1AE-88C20572E87D}</ProjectGuid>
+    <ProjectGuid>{654BFA8A-6C28-489F-902D-8250FB4E7B30}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TEST</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -150,21 +150,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Calculator\Calculator.h" />
-    <ClInclude Include="..\Calculator\Variables.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Calculator\Calculator.cpp" />
-    <ClCompile Include="..\Calculator\Variables.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TEST.cpp" />
     <ClCompile Include="task2.cpp" />
+    <ClCompile Include="TEST.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

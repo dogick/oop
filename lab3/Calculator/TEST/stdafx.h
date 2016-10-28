@@ -22,6 +22,5 @@
 #include <map>
 #include <iostream>
 #include <string>
-#include <math.h> 
 
 // TODO: reference additional headers your program requires here
