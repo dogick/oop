@@ -92,5 +92,37 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, CCalculatorFixture)
             BOOST_CHECK(calculator.AssignValue("spriteSize", value) == RuntimeError::NO_ERRORS);
             BOOST_CHECK(calculator.GetRepository().GetValueVar("spriteSize") == 24.74);
         }
+        struct create_a_variable_for_the_function_definition_ : CCalculatorFixture
+        {
+            create_a_variable_for_the_function_definition_ ()
+            {
+                calculator.DefineVar("fisrtOperand");
+                calculator.AssignValue("fisrtOperand", 20);
+                calculator.DefineVar("secondOperand");
+                calculator.AssignValue("secondOperand", 80);
+            }
+        };
+        BOOST_FIXTURE_TEST_SUITE(create_a_variable_for_the_function_definition, create_a_variable_for_the_function_definition_)
+            BOOST_AUTO_TEST_CASE(can_declare_and_return_the_result_of_the_function)
+            {
+                FunctionRelease functionRelease;
+                functionRelease.firstOperand = "fisrtOperand";
+                functionRelease.isTwoIdentifier = true;
+                functionRelease.secondOperand = "secondOperand";
+                functionRelease.operation = Operation::DIV;
+                BOOST_CHECK(calculator.DefineFunction("Div", functionRelease) == RuntimeError::NO_ERRORS);
+                BOOST_CHECK(calculator.GetFnResult("Div") == 0.25);
+            }
+
+            BOOST_AUTO_TEST_CASE(can_declare_a_function_that_returns_the_value_of_the_variable)
+            {
+                BOOST_CHECK(calculator.DefineVar("bodySize") == RuntimeError::NO_ERRORS);
+                BOOST_CHECK(calculator.AssignValue("bodySize", 10.2) == RuntimeError::NO_ERRORS);
+                FunctionRelease functionRelease;
+                functionRelease.firstOperand = "bodySize";
+                BOOST_CHECK(calculator.DefineFunction("ValueVariable", functionRelease) == RuntimeError::NO_ERRORS);
+                BOOST_CHECK(calculator.GetFnResult("ValueVariable") == 10.2);
+            }
+        BOOST_AUTO_TEST_SUITE_END()
     BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
