@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Control.h"
+#include "Parser.h"
 
 using namespace std;
 using namespace std::placeholders;
@@ -49,16 +50,6 @@ bool CControl::DefineVar(std::istream & args)
     return PrintError(wasError);
 }
 
-boost::optional<std::vector<std::string>> CControl::GetToken(std::string const& assign, std::string const& delimiter)
-{
-    std::vector<std::string> resultSplit;
-    boost::split(resultSplit, assign, boost::is_any_of(delimiter));
-    if (resultSplit.size() != 2)
-    {
-        return {};
-    }
-    return resultSplit;
-}
 
 bool CControl::IsNumber(std::string const& assign)
 {
@@ -77,9 +68,9 @@ bool CControl::IsNumber(std::string const& assign)
 bool CControl::AssignVar(std::istream & args)
 {
     auto wasError = RuntimeError::NO_ERRORS;
-    std::string assign;
-    args >> assign;
-    boost::optional<std::vector<std::string>> token = GetToken(assign, "=");
+    std::string data;
+    args >> data;
+    boost::optional<std::vector<std::string>> token = GetToken(data, "=");
     if (token.is_initialized() && IsNumber(token->at(1)))
     {
         wasError = m_calculator.AssignValue(token->at(0), boost::lexical_cast<double>(token->at(1)));
@@ -167,30 +158,13 @@ bool CControl::PrintVar(std::istream & args)
 bool CControl::DefineFunction(std::istream & args)
 {
     auto wasError = RuntimeError::NO_ERRORS;
-    const std::set<std::string> signsOperation = {"+", "-", "/", "*"};
     std::string function;
     args >> function;
     boost::optional<std::vector<std::string>> token = GetToken(function, "=");
     if (token.is_initialized())
     {
         FunctionRelease functionRelease;
-        boost::optional<std::vector<std::string>> tokenFunctionRelease;
-        for (auto signOperation : signsOperation)
-        {
-            tokenFunctionRelease = GetToken(token->at(1), signOperation);
-            if (tokenFunctionRelease.is_initialized()) //При fn result=GetSum+GetSub
-            {
-                functionRelease.firstOperand = tokenFunctionRelease->at(0);
-                functionRelease.operation = m_calculator.GetOperation(signOperation);
-                functionRelease.secondOperand = tokenFunctionRelease->at(1);
-                functionRelease.isTwoIdentifier = true;
-                break;
-            }
-        }
-        if (!tokenFunctionRelease.is_initialized()) //При fn sum=GetSum
-        {
-            functionRelease.firstOperand = token->at(1);
-        }
+        ParseFunctionRelease(functionRelease, token->at(1));
         wasError = m_calculator.DefineFunction(token->at(0), functionRelease);
     }
     return PrintError(wasError);

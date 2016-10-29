@@ -7,11 +7,11 @@ class CCalculator
 {
 public:
     CRepository GetRepository() const;
-    Operation GetOperation(std::string const& operation) const;
-
+    
     bool CheckIdentifier(std::string const& identifier) const;
     bool IsDigit(char ch) const;
 
+    double CalculationValue(double firstOperandValue, double secondOperandValue, Operation const& operation) const;
     double GetFnResult(std::string const& fnIdentifier) const;
 
     RuntimeError DefineVar(std::string const& identifier);

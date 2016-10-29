@@ -11,27 +11,6 @@ bool CCalculator::IsDigit(char ch) const
     return (ch >= '0') && (ch <= '9');
 }
 
-Operation CCalculator::GetOperation(std::string const& operation) const
-{
-    Operation result;
-    if (operation == "+")
-    {
-        result = Operation::ADD;
-    }
-    else if (operation == "-")
-    {
-        result = Operation::SUB;
-    }
-    else if (operation == "/")
-    {
-        result = Operation::DIV;
-    }
-    else
-    {
-        result = Operation::MUL;
-    }
-    return result;
-}
 
 bool CCalculator::CheckIdentifier(std::string const& identifier) const
 {
@@ -133,7 +112,7 @@ RuntimeError CCalculator::AssignIdentifier(std::string const& firstIdentifier, s
     return wasError;
 }
 
-double CalculationValue(double firstOperandValue, double secondOperandValue, Operation const& operation)
+double CCalculator::CalculationValue(double firstOperandValue, double secondOperandValue, Operation const& operation) const
 {
     double result;
     switch (operation)
@@ -197,9 +176,13 @@ RuntimeError CCalculator::DefineFunction(std::string const& functionIdentifier, 
             m_repository.AddFunction(functionIdentifier, functionRelease);
         }
     }
-    else if(m_repository.IsIdentifierDeclared(functionIdentifier))
+    else if (m_repository.IsIdentifierDeclared(functionIdentifier))
     {
         wasError = RuntimeError::THIS_IDENTIFIER_ALREADY_DECLARED;
+    }
+    else
+    {
+        wasError = RuntimeError::INCORRECTLY_IDENTIFIER;
     }
     return wasError;
 }

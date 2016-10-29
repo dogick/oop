@@ -9,7 +9,6 @@ public:
     bool HandleCommand();
     bool PrintError(RuntimeError const& code);
     bool IsNumber(std::string const& assign);
-    boost::optional<std::vector<std::string>> GetToken(std::string const& assign, std::string const& delimiter);
     std::string GetFormatValue(double const& value);
 private:
     bool DefineVar(std::istream & args);
