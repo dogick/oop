@@ -13,6 +13,8 @@ CControl::CControl(CCalculator & calculator, std::istream & input, std::ostream 
         { "let", bind(&CControl::AssignVar, this, _1) },
         { "printvars", bind(&CControl::PrintVars, this, _1) },
         { "print", bind(&CControl::PrintVar, this, _1) },
+        { "fn", bind(&CControl::DefineFunction, this, _1) },
+        { "printfns", bind(&CControl::PrintFns, this, _1) },
 })
 {
 }
@@ -47,13 +49,13 @@ bool CControl::DefineVar(std::istream & args)
     return PrintError(wasError);
 }
 
-std::vector<std::string> CControl::GetSplitResult(std::string const& assign)
+boost::optional<std::vector<std::string>> CControl::GetToken(std::string const& assign, std::string const& delimiter)
 {
     std::vector<std::string> resultSplit;
-    boost::split(resultSplit, assign, boost::is_any_of("="));
+    boost::split(resultSplit, assign, boost::is_any_of(delimiter));
     if (resultSplit.size() != 2)
     {
-        throw runtime_error("Incorrect data entry!!!");
+        return {};
     }
     return resultSplit;
 }
@@ -77,23 +79,14 @@ bool CControl::AssignVar(std::istream & args)
     auto wasError = RuntimeError::NO_ERRORS;
     std::string assign;
     args >> assign;
-    std::vector<std::string> resultSplit;
-    try
+    boost::optional<std::vector<std::string>> token = GetToken(assign, "=");
+    if (token.is_initialized() && IsNumber(token->at(1)))
     {
-        resultSplit = GetSplitResult(assign);
+        wasError = m_calculator.AssignValue(token->at(0), boost::lexical_cast<double>(token->at(1)));
     }
-    catch (exception const& error)
+    else if(token.is_initialized() && m_calculator.CheckIdentifier(token->at(1)))
     {
-        m_output << error.what() << std::endl;
-        return false;
-    }
-    if (!resultSplit.empty() && IsNumber(resultSplit[1]))
-    {
-        wasError = m_calculator.AssignValue(resultSplit[0], boost::lexical_cast<double>(resultSplit[1]));
-    }
-    else if(!resultSplit.empty() && m_calculator.CheckIdentifier(resultSplit[1]))
-    {
-        wasError = m_calculator.AssignIdentifier(resultSplit[0], resultSplit[1]);
+        wasError = m_calculator.AssignIdentifier(token->at(0), token->at(1));
     }
     else
     {
@@ -171,11 +164,46 @@ bool CControl::PrintVar(std::istream & args)
     return PrintError(wasError);
 }
 
-/*bool CControl::PrintVar(std::istream & args)
+bool CControl::DefineFunction(std::istream & args)
 {
     auto wasError = RuntimeError::NO_ERRORS;
-    std::string identifier;
-    args >> identifier;
-
+    const std::set<std::string> signsOperation = {"+", "-", "/", "*"};
+    std::string function;
+    args >> function;
+    boost::optional<std::vector<std::string>> token = GetToken(function, "=");
+    if (token.is_initialized())
+    {
+        FunctionRelease functionRelease;
+        boost::optional<std::vector<std::string>> tokenFunctionRelease;
+        for (auto signOperation : signsOperation)
+        {
+            tokenFunctionRelease = GetToken(token->at(1), signOperation);
+            if (tokenFunctionRelease.is_initialized()) //При fn result=GetSum+GetSub
+            {
+                functionRelease.firstOperand = tokenFunctionRelease->at(0);
+                functionRelease.operation = m_calculator.GetOperation(signOperation);
+                functionRelease.secondOperand = tokenFunctionRelease->at(1);
+                functionRelease.isTwoIdentifier = true;
+                break;
+            }
+        }
+        if (!tokenFunctionRelease.is_initialized()) //При fn sum=GetSum
+        {
+            functionRelease.firstOperand = token->at(1);
+        }
+        wasError = m_calculator.DefineFunction(token->at(0), functionRelease);
+    }
     return PrintError(wasError);
-}*/
+}
+
+bool CControl::PrintFns(std::istream & args)
+{
+    auto functions = m_calculator.GetRepository().GetFunctions();
+    for (auto function : functions)
+    {
+        double fnResult = m_calculator.GetFnResult(function.first);
+        std::string value = isnan(fnResult) ? "nan" : GetFormatValue(fnResult);
+        m_output << function.first << ":" << value << std::endl;
+    }
+    return true;
+}

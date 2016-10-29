@@ -1,31 +1,20 @@
 #pragma once
 #include "stdafx.h"
-
-enum class Operation
-{
-    ADD,
-    SUB,
-    DIV,
-    MUL
-};
-
-struct FunctionRelease
-{
-    boost::optional<std::string> firstArgument;
-    boost::optional<std::string> secondArgument;
-    boost::optional<Operation> action;
-};
-
-typedef std::map<std::string, double> Vars;
-typedef std::map<std::string, FunctionRelease> Function;
+#include "Var.h"
 
 class CRepository
 {
 public:
+    Function GetFunctions() const;
     Vars GetVars() const;
     double GetValueVar(std::string const& identifier) const;
+
     bool IsIdentifierDeclared(std::string const& identifier) const;
+    bool IsFunction(std::string const& identifier) const;
+    bool IsVar(std::string const& identifier) const;
+
     void AddIdentifier(std::string const& identifier);
+    void AddFunction(std::string const& identifier, FunctionRelease const& functionRelease);
     void SetValue(std::string const& identifier, double value);
 private:
     Vars m_vars;

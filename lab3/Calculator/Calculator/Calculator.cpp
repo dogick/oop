@@ -11,6 +11,28 @@ bool CCalculator::IsDigit(char ch) const
     return (ch >= '0') && (ch <= '9');
 }
 
+Operation CCalculator::GetOperation(std::string const& operation) const
+{
+    Operation result;
+    if (operation == "+")
+    {
+        result = Operation::ADD;
+    }
+    else if (operation == "-")
+    {
+        result = Operation::SUB;
+    }
+    else if (operation == "/")
+    {
+        result = Operation::DIV;
+    }
+    else
+    {
+        result = Operation::MUL;
+    }
+    return result;
+}
+
 bool CCalculator::CheckIdentifier(std::string const& identifier) const
 {
     bool isIdentifier = true;
@@ -18,7 +40,8 @@ bool CCalculator::CheckIdentifier(std::string const& identifier) const
     {
         for (char symbol : identifier)
         {
-            bool isCorrectSymbol = (symbol >= 'A') && (symbol <= 'Z') || (symbol >= 'a') && (symbol <= 'z') || (symbol == '_') || IsDigit(symbol);
+            bool isCorrectSymbol = (symbol >= 'A') && (symbol <= 'Z') || (symbol >= 'a') && 
+                (symbol <= 'z') || (symbol == '_') || IsDigit(symbol);
             if (!isCorrectSymbol)
             {
                 isIdentifier = false;
@@ -80,17 +103,22 @@ RuntimeError CCalculator::AssignIdentifier(std::string const& firstIdentifier, s
     RuntimeError wasError = RuntimeError::NO_ERRORS;
     if (CheckIdentifier(firstIdentifier) && CheckIdentifier(secondIdentifier))
     {
-        bool isfirstIdentifierDeclared = m_repository.IsIdentifierDeclared(firstIdentifier);
-        bool issecondIdentifierDeclared = m_repository.IsIdentifierDeclared(secondIdentifier);
-        if (isfirstIdentifierDeclared && issecondIdentifierDeclared)
+        if (m_repository.IsVar(secondIdentifier))
         {
+            if (!m_repository.IsVar(firstIdentifier))
+            {
+                wasError = DefineVar(firstIdentifier);
+            }
             double value = m_repository.GetValueVar(secondIdentifier);
             m_repository.SetValue(firstIdentifier, value);
         }
-        else if (!isfirstIdentifierDeclared && issecondIdentifierDeclared)
+        else if (m_repository.IsFunction(secondIdentifier))
         {
-            wasError = DefineVar(firstIdentifier);
-            double value = m_repository.GetValueVar(secondIdentifier);
+            if (!m_repository.IsVar(firstIdentifier))
+            {
+                wasError = DefineVar(firstIdentifier);
+            }
+            double value = GetFnResult(secondIdentifier);
             m_repository.SetValue(firstIdentifier, value);
         }
         else
@@ -101,6 +129,77 @@ RuntimeError CCalculator::AssignIdentifier(std::string const& firstIdentifier, s
     else
     {
         wasError = RuntimeError::INCORRECTLY_IDENTIFIER;
+    }
+    return wasError;
+}
+
+double CalculationValue(double firstOperandValue, double secondOperandValue, Operation const& operation)
+{
+    double result;
+    switch (operation)
+    {
+    case Operation::ADD:
+        result = firstOperandValue + secondOperandValue;
+        break;
+    case Operation::DIV:
+        result = firstOperandValue / secondOperandValue;
+        break;
+    case Operation::MUL:
+        result = firstOperandValue * secondOperandValue;
+        break;
+    case Operation::SUB:
+        result = firstOperandValue - secondOperandValue;
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
+double CCalculator::GetFnResult(std::string const& fnIdentifier) const
+{
+    double result;
+    auto fns = m_repository.GetFunctions();
+    auto fn = fns.find(fnIdentifier);
+    if (fn->second.isTwoIdentifier)
+    {
+        double firstOperandValue = m_repository.IsVar(fn->second.firstOperand) ? m_repository.GetValueVar(fn->second.firstOperand) :
+            GetFnResult(fn->second.firstOperand);
+        double secondOperandValue = m_repository.IsVar(fn->second.secondOperand) ? m_repository.GetValueVar(fn->second.secondOperand) :
+            GetFnResult(fn->second.secondOperand);
+        result = CalculationValue(firstOperandValue, secondOperandValue, fn->second.operation);
+    }
+    else 
+    {
+        result = m_repository.IsVar(fn->second.firstOperand) ? m_repository.GetValueVar(fn->second.firstOperand) :
+            GetFnResult(fn->second.firstOperand);
+    }
+
+    return result;
+}
+
+RuntimeError CCalculator::DefineFunction(std::string const& functionIdentifier, FunctionRelease const& functionRelease)
+{
+    RuntimeError wasError = RuntimeError::NO_ERRORS;
+    if (CheckIdentifier(functionIdentifier) && !m_repository.IsIdentifierDeclared(functionIdentifier))
+    {
+        if (functionRelease.isTwoIdentifier)
+        {
+            bool isDeclared = m_repository.IsIdentifierDeclared(functionRelease.firstOperand) &&
+                m_repository.IsIdentifierDeclared(functionRelease.secondOperand);
+            if (isDeclared)
+            {
+                m_repository.AddFunction(functionIdentifier, functionRelease);
+            }
+        }
+        else if (m_repository.IsIdentifierDeclared(functionRelease.firstOperand))
+        {
+            m_repository.AddFunction(functionIdentifier, functionRelease);
+        }
+    }
+    else if(m_repository.IsIdentifierDeclared(functionIdentifier))
+    {
+        wasError = RuntimeError::THIS_IDENTIFIER_ALREADY_DECLARED;
     }
     return wasError;
 }
