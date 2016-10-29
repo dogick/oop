@@ -39,8 +39,8 @@ BOOST_FIXTURE_TEST_SUITE(Control, ControlFixture)
     {
         std::string identifier = "x";
         StartCommandHandling("var " + identifier, "");
-        BOOST_CHECK(calculator.GetStorageVar().GetVars().find(identifier)->first == identifier);
-        BOOST_CHECK(isnan(calculator.GetStorageVar().GetValueVar(identifier)));
+        BOOST_CHECK(calculator.GetRepository().GetVars().find(identifier)->first == identifier);
+        BOOST_CHECK(isnan(calculator.GetRepository().GetValueVar(identifier)));
     }
 
     BOOST_AUTO_TEST_CASE(can_handle_let_identifier_and_value_command)
@@ -49,7 +49,7 @@ BOOST_FIXTURE_TEST_SUITE(Control, ControlFixture)
         double value = 12.34;
         StartCommandHandling("var " + identifier, "");
         StartCommandHandling("let " + identifier + "=" + std::to_string(value), "");
-        BOOST_CHECK(calculator.GetStorageVar().GetValueVar(identifier) == value);
+        BOOST_CHECK(calculator.GetRepository().GetValueVar(identifier) == value);
     }
 
     BOOST_AUTO_TEST_CASE(can_handle_let_identifier_and_identifier_command)
@@ -62,7 +62,7 @@ BOOST_FIXTURE_TEST_SUITE(Control, ControlFixture)
         StartCommandHandling("var " + secondIdentifier, "");
         StartCommandHandling("let " + secondIdentifier + "=20.62", "");
         StartCommandHandling("let " + firstIdentifier + "=" + secondIdentifier, "");
-        BOOST_CHECK(calculator.GetStorageVar().GetValueVar(firstIdentifier) == 20.62);
+        BOOST_CHECK(calculator.GetRepository().GetValueVar(firstIdentifier) == 20.62);
     }
 
     BOOST_AUTO_TEST_CASE(command_var_can_output_error)

@@ -51,7 +51,7 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, CCalculatorFixture)
     {
         std::string identifier = "position";
         BOOST_CHECK(calculator.DefineVar(identifier) == RuntimeError::NO_ERRORS);
-        BOOST_CHECK(isnan(calculator.GetStorageVar().GetValueVar(identifier)));
+        BOOST_CHECK(isnan(calculator.GetRepository().GetValueVar(identifier)));
     }
 
     BOOST_AUTO_TEST_CASE(can_assign_a_variable_value)
@@ -60,7 +60,7 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, CCalculatorFixture)
         double value = 10.3;
         BOOST_CHECK(calculator.DefineVar(identifier) == RuntimeError::NO_ERRORS);
         calculator.AssignValue(identifier, 10.3);
-        BOOST_CHECK(calculator.GetStorageVar().GetValueVar(identifier) == value);
+        BOOST_CHECK(calculator.GetRepository().GetValueVar(identifier) == value);
     }
 
     struct when_variables_are_define_ : CCalculatorFixture
@@ -77,20 +77,20 @@ BOOST_FIXTURE_TEST_SUITE(Calculator, CCalculatorFixture)
         BOOST_AUTO_TEST_CASE(can_assign_an_identifier)
         {
             BOOST_CHECK(calculator.AssignIdentifier("bodySize", "spriteSize") == RuntimeError::NO_ERRORS);
-            BOOST_CHECK(calculator.GetStorageVar().GetValueVar("bodySize") == calculator.GetStorageVar().GetValueVar("spriteSize"));
+            BOOST_CHECK(calculator.GetRepository().GetValueVar("bodySize") == calculator.GetRepository().GetValueVar("spriteSize"));
         }
 
         BOOST_AUTO_TEST_CASE(can_define_a_variable_if_the_identifier_wast_declared_previously)
         {
             BOOST_CHECK(calculator.AssignIdentifier("sizeX", "spriteSize") == RuntimeError::NO_ERRORS);
-            BOOST_CHECK(calculator.GetStorageVar().GetValueVar("sizeX") == calculator.GetStorageVar().GetValueVar("spriteSize"));
+            BOOST_CHECK(calculator.GetRepository().GetValueVar("sizeX") == calculator.GetRepository().GetValueVar("spriteSize"));
         }
 
         BOOST_AUTO_TEST_CASE(can_override)
         {
             double value = 24.74;
             BOOST_CHECK(calculator.AssignValue("spriteSize", value) == RuntimeError::NO_ERRORS);
-            BOOST_CHECK(calculator.GetStorageVar().GetValueVar("spriteSize") == 24.74);
+            BOOST_CHECK(calculator.GetRepository().GetValueVar("spriteSize") == 24.74);
         }
     BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

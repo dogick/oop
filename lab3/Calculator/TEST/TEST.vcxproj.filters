@@ -33,7 +33,7 @@
     <ClInclude Include="..\Calculator\Control.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="..\Calculator\StorageVar.h">
+    <ClInclude Include="..\Calculator\Repository.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="..\Calculator\Control.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="..\Calculator\StorageVar.cpp">
+    <ClCompile Include="..\Calculator\Repository.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
