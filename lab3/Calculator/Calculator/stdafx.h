@@ -21,5 +21,6 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/format.hpp>
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы

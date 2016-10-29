@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Calculator.h"
 
-CStorageVar CCalculator::GetStorageVar() const
+CRepository CCalculator::GetRepository() const
 {
-    return m_storageVar;
+    return m_repository;
 }
 
 bool CCalculator::IsDigit(char ch) const
@@ -36,10 +36,10 @@ RuntimeError CCalculator::DefineVar(std::string const& identifier)
 {
     RuntimeError wasError = RuntimeError::NO_ERRORS;
     bool isIdentifier = CheckIdentifier(identifier);
-    bool isIdentifierDeclared = m_storageVar.IsIdentifierDeclared(identifier);
+    bool isIdentifierDeclared = m_repository.IsIdentifierDeclared(identifier);
     if (!identifier.empty() && isIdentifier && !isIdentifierDeclared)
     {
-        m_storageVar.AddIdentifier(identifier);
+        m_repository.AddIdentifier(identifier);
     }
     else if (!isIdentifier)
     {
@@ -55,17 +55,17 @@ RuntimeError CCalculator::DefineVar(std::string const& identifier)
 RuntimeError CCalculator::AssignValue(std::string const& identifier, double value)
 {
     RuntimeError wasError = RuntimeError::NO_ERRORS;
-    bool isIdentifierDeclared = m_storageVar.IsIdentifierDeclared(identifier);
+    bool isIdentifierDeclared = m_repository.IsIdentifierDeclared(identifier);
     if (CheckIdentifier(identifier))
     {
         if (isIdentifierDeclared)
         {
-            m_storageVar.SetValue(identifier, value);
+            m_repository.SetValue(identifier, value);
         }
         else if (!isIdentifierDeclared)
         {
-            m_storageVar.AddIdentifier(identifier);
-            m_storageVar.SetValue(identifier, value);
+            m_repository.AddIdentifier(identifier);
+            m_repository.SetValue(identifier, value);
         }
     }
     else
@@ -80,18 +80,18 @@ RuntimeError CCalculator::AssignIdentifier(std::string const& firstIdentifier, s
     RuntimeError wasError = RuntimeError::NO_ERRORS;
     if (CheckIdentifier(firstIdentifier) && CheckIdentifier(secondIdentifier))
     {
-        bool isfirstIdentifierDeclared = m_storageVar.IsIdentifierDeclared(firstIdentifier);
-        bool issecondIdentifierDeclared = m_storageVar.IsIdentifierDeclared(secondIdentifier);
+        bool isfirstIdentifierDeclared = m_repository.IsIdentifierDeclared(firstIdentifier);
+        bool issecondIdentifierDeclared = m_repository.IsIdentifierDeclared(secondIdentifier);
         if (isfirstIdentifierDeclared && issecondIdentifierDeclared)
         {
-            double value = m_storageVar.GetValueVar(secondIdentifier);
-            m_storageVar.SetValue(firstIdentifier, value);
+            double value = m_repository.GetValueVar(secondIdentifier);
+            m_repository.SetValue(firstIdentifier, value);
         }
         else if (!isfirstIdentifierDeclared && issecondIdentifierDeclared)
         {
             wasError = DefineVar(firstIdentifier);
-            double value = m_storageVar.GetValueVar(secondIdentifier);
-            m_storageVar.SetValue(firstIdentifier, value);
+            double value = m_repository.GetValueVar(secondIdentifier);
+            m_repository.SetValue(firstIdentifier, value);
         }
         else
         {

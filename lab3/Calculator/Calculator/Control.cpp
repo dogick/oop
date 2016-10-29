@@ -136,7 +136,7 @@ std::string CControl::GetFormatValue(double const& value)
 
 bool CControl::PrintVars(std::istream & /*args*/)
 {
-    auto vars = m_calculator.GetStorageVar().GetVars();
+    auto vars = m_calculator.GetRepository().GetVars();
     for (auto var : vars)
     {
         std::string value = isnan(var.second) ? "nan" : GetFormatValue(var.second);
@@ -152,7 +152,7 @@ bool CControl::PrintVar(std::istream & args)
     args >> identifier;
     if (m_calculator.CheckIdentifier(identifier))
     {
-        auto vars = m_calculator.GetStorageVar().GetVars();
+        auto vars = m_calculator.GetRepository().GetVars();
         auto var = vars.find(identifier);
         if (var != vars.end())
         {
@@ -170,3 +170,12 @@ bool CControl::PrintVar(std::istream & args)
     }
     return PrintError(wasError);
 }
+
+/*bool CControl::PrintVar(std::istream & args)
+{
+    auto wasError = RuntimeError::NO_ERRORS;
+    std::string identifier;
+    args >> identifier;
+
+    return PrintError(wasError);
+}*/
