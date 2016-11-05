@@ -7,4 +7,4 @@ struct Color
     unsigned G;
     unsigned B;
 };
-bool ConvertHexInRGB(std::string const& HEXColor, Color & RGBColor);
+bool ConvertHexInRGBColor(std::string const& HexColor, Color & RGBColor);

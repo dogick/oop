@@ -1,17 +1,13 @@
 #pragma once
 #include "stdafx.h"
 #include "Var.h"
-#include "Shape.h"
 #include "Color.h"
 
-class CPoint : public IShape
+class CPoint
 {
 public:
-    CPoint(std::string const& colorOutline, Point point);
-    Point GetPoint() const;
-    double GetArea() const override;
-    double GetPerimeter() const override;
-    std::string ToString() const override;
+    CPoint(Point const& point);
+    Point CPoint::GetPoint() const;
 private:
     Point m_point;
 };

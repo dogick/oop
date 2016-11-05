@@ -10,7 +10,6 @@ CRemoteControl::CRemoteControl(std::istream & input, std::ostream & output)
     :m_input(input)
     , m_output(output)
     , m_actionMap({
-        { "point", bind(&CRemoteControl::CreatePoint, this, _1) },
         { "line", bind(&CRemoteControl::CreateLine, this, _1) },
         { "circle", bind(&CRemoteControl::CreateCircle, this, _1) },
         { "rectangle", bind(&CRemoteControl::CreateRectangle, this, _1) },
@@ -21,6 +20,10 @@ CRemoteControl::CRemoteControl(std::istream & input, std::ostream & output)
 
 void CRemoteControl::PrintInfoShape() const
 {
+    if (m_shapes.size() != 0)
+    {
+        m_output << "|SHAPES|\n";
+    }
     for (auto shape : m_shapes)
     {
        m_output << ">" << shape->ToString() << "\n";
@@ -30,6 +33,7 @@ void CRemoteControl::PrintInfoShape() const
 bool CRemoteControl::HandleCommand()
 {
     PrintInfoShape();
+    m_output << ">";
     string commandLine;
     getline(m_input, commandLine);
     istringstream strm(commandLine);
@@ -51,33 +55,6 @@ std::vector<std::string> CRemoteControl::GetTokens(std::string const& shapeSpeci
     boost::tokenizer<boost::char_separator<char>> tokenizer(shapeSpecification, delimiters);
     std::transform(tokenizer.begin(), tokenizer.end(), std::back_inserter(tokens), [](auto const& token) { return token; });
     return tokens;
-}
-
-
-bool CRemoteControl::CreatePoint(std::istream & args)
-{
-    std::string shapeSpecification;
-    getline(args, shapeSpecification);
-    std::vector<std::string> tokens = GetTokens(shapeSpecification);
-    if (tokens.size() != 3)
-    {
-        m_output << "Invalid number of parameters!!!\n"
-            << "Usage: <x1> <y1> <colorOutline>\n";
-        return false;
-    }
-    Point point;
-    try
-    {
-        point.x = boost::lexical_cast<double>(tokens[0]);
-        point.y = boost::lexical_cast<double>(tokens[1]);
-    }
-    catch (boost::bad_lexical_cast&)
-    {
-        m_output << "Invalid coordinate point!!!\n";
-        return false;
-    }
-    m_shapes.push_back(std::make_shared<CPoint>(CPoint(tokens[2], point)));
-    return true;
 }
 
 bool CRemoteControl::CreateLine(std::istream & args)
@@ -162,7 +139,7 @@ bool CRemoteControl::CreateRectangle(std::istream & args)
         m_output << "Invalid coordinate point!!!\n";
         return false;
     }
-    m_shapes.push_back(std::make_shared<CRectangle>(CRectangle(position, width, height, tokens[3], tokens[4])));
+    m_shapes.push_back(std::make_shared<CRectangle>(CRectangle(position, width, height, tokens[4], tokens[5])));
     return true;
 }
 

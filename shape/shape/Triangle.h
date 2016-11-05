@@ -9,11 +9,18 @@ typedef std::vector<std::shared_ptr<CPoint>> Vertices;
 class CTriangle : public ISolidShape
 {
 public:
-    CTriangle(Point vertex1, Point vertex2, Point vertex3, std::string const& colorOutlines, std::string const& fillColor);
+    CTriangle(Point firstVertex, Point secondVertex, Point thirdVertex, std::string const& colorOutlines, std::string const& fillColor);
     double GetArea() const override;
     double GetPerimeter() const override;
-    double GetLengthLine(std::shared_ptr<CPoint> vertex1, std::shared_ptr<CPoint> vertex2) const;
+    double GetLengthLine(std::shared_ptr<CPoint> firstVertex, std::shared_ptr<CPoint> secondVertex) const;
     std::string ToString() const override;
+    std::string GetOutlineColor() const override;
+    std::string GetFillColor() const override;
+    std::shared_ptr<CPoint> const& GetVertex1() const;
+    std::shared_ptr<CPoint> const& GetVertex2() const;
+    std::shared_ptr<CPoint> const& GetVertex3() const;
 private:
     Vertices m_vertices;
+    std::string m_outlineColor;
+    std::string m_fillColor;
 };

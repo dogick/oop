@@ -5,11 +5,12 @@
 class IShape
 {
 public:
-    IShape(std::string const& colorOutlines);
+    IShape();
+    ~IShape();
     virtual double GetArea() const = 0;
     virtual double GetPerimeter() const = 0;
     virtual std::string ToString() const = 0;
-    std::string GetColorOutlines() const;
+    virtual std::string GetOutlineColor() const = 0;
 private:
-    std::string m_colorOutlines;
+    std::string m_outlineColor;
 };

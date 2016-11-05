@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Color.h"
 
-bool ConvertHexInRGB(std::string const& HEXColor, Color & RGBColor)
+bool ConvertHexInRGBColor(std::string const& HEXColor, Color & RGBColor)
 {
     bool wasError = false;
     try

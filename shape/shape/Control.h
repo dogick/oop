@@ -18,7 +18,6 @@ public:
     // Èçáàâëÿåìñÿ îò ïðåäóïðåæäåíèÿ êîìïèëÿòîðà î òîì, ÷òî îí íå ñìîæåò ñãåíåðèðîâàòü îïåðàòîð ïðèñâàèâàíèÿ
     // CRemoteControl& operator=(const CRemoteControl &) = delete;
 private:
-    bool CreatePoint(std::istream & args);
     bool CreateLine(std::istream & args);
     bool CreateCircle(std::istream & args);
     bool CreateRectangle(std::istream & args);
