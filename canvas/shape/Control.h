@@ -6,6 +6,8 @@
 #include "Rectangle.h"
 #include "Triangle.h"
 #include "Canvas.h"
+#include <fstream>
+#include "Color.h"
 
 class IShape;
 
@@ -13,7 +15,7 @@ class IShape;
 class CRemoteControl : boost::noncopyable
 {
 public:
-    CRemoteControl(std::istream & input, std::ostream & output, std::shared_ptr<CCanvas> canvas);
+    CRemoteControl(std::ifstream & inputFile, std::ostream & output, std::shared_ptr<CCanvas> canvas);
     bool HandleCommand();
     std::vector<std::string> GetTokens(std::string const& shapeSpecification) const;
     // Èçáàâëÿåìñÿ îò ïðåäóïðåæäåíèÿ êîìïèëÿòîðà î òîì, ÷òî îí íå ñìîæåò ñãåíåðèðîâàòü îïåðàòîð ïðèñâàèâàíèÿ
@@ -23,11 +25,10 @@ private:
     bool CreateCircle(std::istream & args);
     bool CreateRectangle(std::istream & args);
     bool CreateTriangle(std::istream & args);
-    void PrintInfoShape() const;
 private:
     typedef std::map<std::string, std::function<bool(std::istream & args)>> ActionMap;
 
-    std::istream & m_input;
+    std::ifstream & m_input;
     std::ostream & m_output;
     std::shared_ptr<CCanvas> m_canvas;
     const ActionMap m_actionMap;

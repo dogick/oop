@@ -3,9 +3,10 @@
 
 
 
-CCircle::CCircle(Point center, double radius, std::string const& outlineColor, std::string const& fillColor)
+CCircle::CCircle(Point center, float radius, float outlineThickness, Color const& outlineColor, Color const& fillColor)
     :m_center(std::make_shared<CPoint>(center)),
     m_radius(radius),
+    m_outlineThickness(outlineThickness),
     m_outlineColor(outlineColor),
     m_fillColor(fillColor)
 {
@@ -16,30 +17,30 @@ std::shared_ptr<CPoint> const& CCircle::GetCenter() const
     return m_center;
 }
 
-double CCircle::GetRadius() const
+float CCircle::GetRadius() const
 {
     return m_radius;
 }
 
 std::string CCircle::GetOutlineColor() const
 {
-    return m_outlineColor;
+    return "";
 };
 
 std::string CCircle::GetFillColor() const
 {
-    return m_fillColor;
+    return "";
 };
 
 
-double CCircle::GetArea() const
+float CCircle::GetArea() const
 {
-    return M_PI * std::pow(m_radius, 2);
+    return float(M_PI) * std::pow(m_radius, 2);
 };
 
-double CCircle::GetPerimeter() const
+float CCircle::GetPerimeter() const
 {
-    return 2 * M_PI * m_radius;
+    return 2 * float(M_PI) * m_radius;
 };
 
 std::string CCircle::ToString() const
@@ -55,3 +56,8 @@ std::string CCircle::ToString() const
     return strm.str();
 };
 
+void CCircle::Draw(ICanvas & canvas) const
+{
+    canvas.FillCircle(m_center, m_radius, m_fillColor);
+    canvas.DrawCircle(m_center, m_radius, m_outlineThickness, m_outlineColor);
+}

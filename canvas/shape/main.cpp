@@ -5,19 +5,33 @@
 #include "Control.h"
 
 using namespace std;
-#include <SFML\Graphics.hpp>
-void main()
+
+
+int main(int argc, char *argv[])
 {
-    std::shared_ptr<CCanvas> canvas = std::make_shared<CCanvas>(WINDOW_WIDTH, WINDOW_HEIGHT);
-    canvas->Info();
-    CRemoteControl remoteControl(cin, cout, canvas);
-    while (!cin.eof() && !cin.fail())
+    if (argc != 2)
+    {
+        cout << "Invalid arguments count\n"
+            << "Usage: shape.exe <input file>\n";
+        return 1;
+    }
+    ifstream inputFile(argv[1]);
+    if (!inputFile.is_open())
+    {
+        cout << "Failed to open " << argv[1] << " for writing\n";
+        return 1;
+    }
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    std::shared_ptr<CCanvas> canvas = std::make_shared<CCanvas>(WINDOW_WIDTH, WINDOW_HEIGHT, settings);
+    CRemoteControl remoteControl(inputFile, cout, canvas);
+    while (!inputFile.eof() && !inputFile.fail())
     {
         if (!remoteControl.HandleCommand())
         {
-            cout << "Unknown command!" << endl;
+            return 1;
         }
     }
-    canvas->Info();
     canvas->EnterMainLoop();
+    return 0;
 }

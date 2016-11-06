@@ -3,8 +3,8 @@
 
 struct Point
 {
-    double x;
-    double y;
+    float x;
+    float y;
 };
 
 typedef std::vector<Point> Points;

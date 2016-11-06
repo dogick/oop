@@ -22,6 +22,6 @@
 #include <boost/lexical_cast.hpp>
 #define _USE_MATH_DEFINES
 #include <math.h>
-
+#include <fstream>
 #include <SFML\Graphics.hpp>
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы

@@ -4,11 +4,16 @@
 bool ConvertHexInRGBColor(std::string const& HEXColor, Color & RGBColor)
 {
     bool wasError = false;
+    if (HEXColor[0] != '#')
+    {
+        std::cout << "ERROR: not found the special symbol '#'\n";
+        return true;
+    }
     try
     {
-        RGBColor.R = std::stoi(HEXColor.substr(1, 2), 0, 16);
-        RGBColor.G = std::stoi(HEXColor.substr(3, 2), 0, 16);
-        RGBColor.B = std::stoi(HEXColor.substr(5, 2), 0, 16);
+        RGBColor.Red = std::stoi(HEXColor.substr(1, 2), 0, 16);
+        RGBColor.Green = std::stoi(HEXColor.substr(3, 2), 0, 16);
+        RGBColor.Blue = std::stoi(HEXColor.substr(5, 2), 0, 16);
     }
     catch (std::exception const& e)
     {

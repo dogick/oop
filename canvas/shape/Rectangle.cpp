@@ -1,22 +1,25 @@
 #include "stdafx.h"
 #include "Rectangle.h"
 
-CRectangle::CRectangle(Point leftTop, double height, double width, std::string const& outlineColor, std::string const& fillColor)
+CRectangle::CRectangle(Point leftTop, float height, float width, Color const& outlineColor, Color const& fillColor)
     :m_leftTop(std::make_shared<CPoint>(leftTop)),
     m_height(height),
     m_width(width),
     m_fillColor(fillColor),
     m_outlineColor(outlineColor)
 {
-    m_rightBottom = std::make_shared<CPoint>(CPoint({ leftTop.x + width, leftTop.y + height }));
+    m_vertices.push_back(m_leftTop);
+    m_vertices.push_back(std::make_shared<CPoint>(CPoint({ leftTop.x + width, leftTop.y })));
+    m_vertices.push_back(std::make_shared<CPoint>(CPoint({ leftTop.x + width, leftTop.y + height })));
+    m_vertices.push_back(std::make_shared<CPoint>(CPoint({ leftTop.x, leftTop.y + height })));
 }
 
-double CRectangle::GetWidth() const
+float CRectangle::GetWidth() const
 {
     return m_width;
 };
 
-double CRectangle::GetHeight() const
+float CRectangle::GetHeight() const
 {
     return m_height;
 };
@@ -29,25 +32,25 @@ std::shared_ptr<CPoint> const& CRectangle::GetLeftTop() const
 
 std::shared_ptr<CPoint> const& CRectangle::GetRightBottom() const
 {
-    return m_rightBottom;
+    return m_vertices[2];
 }
 
 std::string CRectangle::GetOutlineColor() const
 {
-    return m_outlineColor;
+    return "";
 };
 
 std::string CRectangle::GetFillColor() const
 {
-    return m_fillColor;
+    return "";
 };
 
-double CRectangle::GetArea() const
+float CRectangle::GetArea() const
 {
     return m_width * m_height;
 };
 
-double CRectangle::GetPerimeter() const
+float CRectangle::GetPerimeter() const
 {
     return 2 * (m_width + m_height);
 };
@@ -64,3 +67,7 @@ std::string CRectangle::ToString() const
     return strm.str();
 };
 
+void CRectangle::Draw(ICanvas & canvas) const
+{
+    canvas.DrawPolygon(m_vertices, m_outlineColor, m_fillColor);
+}
